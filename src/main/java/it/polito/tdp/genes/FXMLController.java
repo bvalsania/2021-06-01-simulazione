@@ -5,6 +5,8 @@
 package it.polito.tdp.genes;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.genes.model.Genes;
@@ -30,7 +32,7 @@ public class FXMLController {
     private Button btnCreaGrafo; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGeni"
-    private ComboBox<?> cmbGeni; // Value injected by FXMLLoader
+    private ComboBox<Genes> cmbGeni; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnGeniAdiacenti"
     private Button btnGeniAdiacenti; // Value injected by FXMLLoader
@@ -46,19 +48,60 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+ 
     	
-
+    	txtResult.clear();
+    	
+    	String msg = this.model.creaGrafo();
+    	txtResult.appendText(msg);
+    	
+    	
+    	List<Genes> list = this.model.getVert();
+    	this.cmbGeni.getItems().clear();
+    	this.cmbGeni.getItems().addAll(list);
+    	
+    	
     }
 
     @FXML
     void doGeniAdiacenti(ActionEvent event) {
 
+    	txtResult.clear();
+    	
+    	Genes g = this.cmbGeni.getValue();
+    	
+    	if(g == null) {
+    		txtResult.appendText("errore, selezionare un gene");
+    	}
+    	
+    	
+    	txtResult.appendText("Lista adiacenza geni: \n"+this.model.getAdiacenza(g));
     	
     }
 
     @FXML
     void doSimula(ActionEvent event) {
 
+    	txtResult.clear();
+    	Genes g = this.cmbGeni.getValue();
+    	
+    	
+    	
+    	try {
+    		int n = Integer.parseInt(this.txtIng.getText());
+    		Map<Genes, Integer> studiati = model.simulaIng(g, n);
+    		if(studiati==null) {
+        		txtResult.appendText("errore");
+        	}else {
+        		for(Genes s: studiati.keySet()) {
+        			txtResult.appendText(s+ " "+studiati.get(s)+"\n");
+        		}
+        	}
+    		
+    		
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("errore, inserire un valore corretto");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
